@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Lämpötilastot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script defer src="assets/vanilla.js"></script>
+
+</head>
+
+<body>
+
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item">Lämpötilastot</a>
+            <a id="photostart" class="navbar-item icon is-large">
+                <i class="fas fa-2x fa-camera"></i>
+            </a>
+        </div>
+
+    </nav>
+    <section class="section" id="photosection" style="display:none;">
+        <!-- Camera sensor -->
+        <canvas id="camera--sensor"></canvas>
+        <!-- Camera view -->
+        <video id="camera--view" autoplay playsinline></video>
+        <!-- Camera output -->
+        <img src="//:0" alt="" id="camera--output">
+
+        <!-- Camera trigger -->
+        <button id="camera--trigger">Take a picture</button>
+    </section>
+
+
+</body>
+
+</html>
