@@ -1,0 +1,14 @@
+version: '3'
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      #args:
+      #  my_flask: 5000
+    ports:
+      - "8000:5000"
+    volumes:
+      - ./photos:/photos
+    environment:
+      - UPLOAD_TOKEN=${UPLOAD_TOKEN}
