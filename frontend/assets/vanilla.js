@@ -1,4 +1,3 @@
-
 var photostart = document.querySelector('#photostart')
 var photosection = document.querySelector('#photosection')
 
@@ -10,11 +9,11 @@ const video = document.querySelector("#video"),
     takepicturebutton = document.querySelector("#takepicturebutton")
 
 photostart.addEventListener('click', (elem) => {
-    console.log(elem, this)
+    // console.log(elem, this)
     photosectionvisible = !photosectionvisible
     if (photosectionvisible) {
         video.style.display = 'block'
-	takepicturebutton.style.display = 'block'
+        takepicturebutton.style.display = 'block'
         photosection.style.display = 'block'
         photo.style.display = 'none'
         photostart.classList.add('has-text-success')
@@ -30,12 +29,12 @@ var constraints = { video: { facingMode: "environment" }, audio: false }
 
 function cameraStop() {
     video.style.display = 'none'
-    takepicturebutton.style.display = 'none'    
+    takepicturebutton.style.display = 'none'
     navigator.mediaDevices
         .getUserMedia(constraints)
         .then((stream) => {
-	stream.getTracks().forEach((track) => track.stop())
-    })
+            stream.getTracks().forEach((track) => track.stop())
+        })
 }
 
 function closeMessages() {
@@ -47,7 +46,7 @@ function closeMessages() {
 }
 
 function showMessage(id, msg) {
-    console.log("%O", msg)
+    // console.log("%O", msg)
     msg = timestamp() + " " + msg
     const e = document.querySelector(id)
     e.innerHTML += `<p>${msg}</p>`
@@ -59,7 +58,7 @@ function cameraStart() {
     navigator.mediaDevices
         .getUserMedia(constraints)
         .then((stream) => {
-	   showMessage('#message', 'setting stream track to video')
+            showMessage('#message', 'setting stream track to video')
             track = stream.getTracks()[0]
             video.srcObject = stream
         })
@@ -69,12 +68,16 @@ function cameraStart() {
 
 function upload() {
     canvas.toBlob((blob) => {
-    var formData = new FormData()
-    formData.append("file", blob, timestamp()+'.jpg')
-    formData.append('upload_token', TOKEN)
-    fetch(BACKEND, { method: 'POST', body: formData })
-        .then((response) => showMessage('#message', response))
-        .catch((err) => showMessage('#error', err))
+        var formData = new FormData()
+        formData.append("file", blob, timestamp() + '.jpg')
+        formData.append('upload_token', TOKEN)
+        fetch(BACKEND, { method: 'POST', body: formData })
+            .then((response) => {
+                showMessage('#message', response.status == 200 ? "Kuva talletettu" : "Virhe?" + response)
+                photosection.style.display = 'none'
+                photostart.classList.remove('has-text-success')
+            })
+            .catch((err) => showMessage('#error', err))
     }, 'image/jpeg', 0.90)
 }
 
@@ -91,7 +94,6 @@ takepicturebutton.onclick = function() {
 function timestamp() {
     const d = new Date()
     var z = n => (n < 10 ? '0' : '') + n
-
     return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' +
         z(d.getDate()) + 'T' + z(d.getHours()) + '_' + z(d.getMinutes()) +
         '_' + z(d.getSeconds())
