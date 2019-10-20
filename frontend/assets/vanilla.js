@@ -1,5 +1,4 @@
-const TOKEN = 'test'
-const BACKEND = 'localhost:8080/upload'
+
 var photostart = document.querySelector('#photostart')
 var photosection = document.querySelector('#photosection')
 
@@ -15,6 +14,7 @@ photostart.addEventListener('click', (elem) => {
     photosectionvisible = !photosectionvisible
     if (photosectionvisible) {
         video.style.display = 'block'
+	takepicturebutton.style.display = 'block'
         photosection.style.display = 'block'
         photo.style.display = 'none'
         photostart.classList.add('has-text-success')
@@ -29,10 +29,13 @@ photostart.addEventListener('click', (elem) => {
 var constraints = { video: { facingMode: "environment" }, audio: false }
 
 function cameraStop() {
-    if (video.srcObject) {
-        video.srcObject.getTracks().array.forEach((track) => track.stop())
-    }
     video.style.display = 'none'
+    takepicturebutton.style.display = 'none'    
+    navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then((stream) => {
+	stream.getTracks().forEach((track) => track.stop())
+    })
 }
 
 function closeMessages() {
@@ -56,6 +59,7 @@ function cameraStart() {
     navigator.mediaDevices
         .getUserMedia(constraints)
         .then((stream) => {
+	   showMessage('#message', 'setting stream track to video')
             track = stream.getTracks()[0]
             video.srcObject = stream
         })
@@ -64,20 +68,21 @@ function cameraStart() {
 
 
 function upload() {
-    var formData = new FormData();
-    formData.append("file" + timestamp(), photo.src);
-    formData.append('upload_token', TOKEN);
-    console.log(formData)
+    canvas.toBlob((blob) => {
+    var formData = new FormData()
+    formData.append("file", blob, timestamp()+'.jpg')
+    formData.append('upload_token', TOKEN)
     fetch(BACKEND, { method: 'POST', body: formData })
-        .then((response) => showMessage('#message', msg))
+        .then((response) => showMessage('#message', response))
         .catch((err) => showMessage('#error', err))
+    }, 'image/jpeg', 0.90)
 }
 
 takepicturebutton.onclick = function() {
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     canvas.getContext("2d").drawImage(video, 0, 0)
-    photo.src = canvas.("image/jpeg")
+    photo.src = canvas.toDataURL("image/jpeg")
     photo.style.display = 'block'
     cameraStop()
     upload()
