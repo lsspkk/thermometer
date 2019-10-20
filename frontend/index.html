@@ -27,18 +27,17 @@
                 <i class="fas fa-2x fa-camera"></i>
             </a>
         </div>
-
     </nav>
+    <section class="section" id="messages">
+        <div id="closemessages" onclick="closeMessages()" class="fas fa-1x fa-window-close"></div>
+        <div id="error"></div>
+        <div id="message"></div>
+    </section>
     <section class="section" id="photosection" style="display:none;">
-        <!-- Camera sensor -->
-        <canvas id="camera--sensor"></canvas>
-        <!-- Camera view -->
-        <video id="camera--view" autoplay playsinline></video>
-        <!-- Camera output -->
-        <img src="//:0" alt="" id="camera--output">
-
-        <!-- Camera trigger -->
-        <button id="camera--trigger">Take a picture</button>
+        <canvas id="canvas"></canvas>
+        <video id="video" autoplay playsinline></video>
+        <img src="//:0" alt="" id="photo">
+        <button id="takepicturebutton">Kuva</button>
     </section>
 
 

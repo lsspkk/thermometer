@@ -7,7 +7,7 @@ services:
       #args:
       #  my_flask: 5000
     ports:
-      - "8000:5000"
+      - "${UPLOAD_PORT}:5000"
     volumes:
       - ./photos:/photos
     environment:

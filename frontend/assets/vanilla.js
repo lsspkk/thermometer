@@ -1,49 +1,93 @@
+const TOKEN = 'test'
+const BACKEND = 'localhost:8080/upload'
 var photostart = document.querySelector('#photostart')
 var photosection = document.querySelector('#photosection')
 
 var photosectionvisible = 'false'
 
+const video = document.querySelector("#video"),
+    photo = document.querySelector("#photo"),
+    canvas = document.querySelector("#canvas"),
+    takepicturebutton = document.querySelector("#takepicturebutton")
+
 photostart.addEventListener('click', (elem) => {
     console.log(elem, this)
     photosectionvisible = !photosectionvisible
     if (photosectionvisible) {
+        video.style.display = 'block'
         photosection.style.display = 'block'
+        photo.style.display = 'none'
         photostart.classList.add('has-text-success')
         cameraStart()
     } else {
         photosection.style.display = 'none'
         photostart.classList.remove('has-text-success')
-        cameraStop
+        cameraStop()
     }
 })
 
-
 var constraints = { video: { facingMode: "environment" }, audio: false }
-const cameraView = document.querySelector("#camera--view"),
-    cameraOutput = document.querySelector("#camera--output"),
-    cameraSensor = document.querySelector("#camera--sensor"),
-    cameraTrigger = document.querySelector("#camera--trigger")
 
 function cameraStop() {
-    stream.getTracks().array.forEach((track) => track.stop())
+    if (video.srcObject) {
+        video.srcObject.getTracks().array.forEach((track) => track.stop())
+    }
+    video.style.display = 'none'
+}
+
+function closeMessages() {
+    document.querySelector('#error').classList.remove('visible')
+    document.querySelector('#message').classList.remove('visible')
+    document.querySelector('#error').innerHTML = ''
+    document.querySelector('#message').innerHTML = ''
+    document.querySelector('#closemessages').classList.remove('visible')
+}
+
+function showMessage(id, msg) {
+    console.log("%O", msg)
+    msg = timestamp() + " " + msg
+    const e = document.querySelector(id)
+    e.innerHTML += `<p>${msg}</p>`
+    e.classList.add('visible')
+    document.querySelector('#closemessages').classList.add('visible')
 }
 
 function cameraStart() {
     navigator.mediaDevices
         .getUserMedia(constraints)
-        .then(function(stream) {
+        .then((stream) => {
             track = stream.getTracks()[0]
-            cameraView.srcObject = stream
+            video.srcObject = stream
         })
-        .catch(function(error) {
-            console.error("Error when starting camera.", error)
-        })
+        .catch(err => showMessage('#error', err))
 }
 
-cameraTrigger.onclick = function() {
-    cameraSensor.width = cameraView.videoWidth
-    cameraSensor.height = cameraView.videoHeight
-    cameraSensor.getContext("2d").drawImage(cameraView, 0, 0)
-    cameraOutput.src = cameraSensor.toDataURL("image/webp")
-    cameraOutput.classList.add("taken")
+
+function upload() {
+    var formData = new FormData();
+    formData.append("file" + timestamp(), photo.src);
+    formData.append('upload_token', TOKEN);
+    console.log(formData)
+    fetch(BACKEND, { method: 'POST', body: formData })
+        .then((response) => showMessage('#message', msg))
+        .catch((err) => showMessage('#error', err))
+}
+
+takepicturebutton.onclick = function() {
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    canvas.getContext("2d").drawImage(video, 0, 0)
+    photo.src = canvas.("image/jpeg")
+    photo.style.display = 'block'
+    cameraStop()
+    upload()
+}
+
+function timestamp() {
+    const d = new Date()
+    var z = n => (n < 10 ? '0' : '') + n
+
+    return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' +
+        z(d.getDate()) + 'T' + z(d.getHours()) + '_' + z(d.getMinutes()) +
+        '_' + z(d.getSeconds())
 }
