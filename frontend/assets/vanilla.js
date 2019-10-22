@@ -61,6 +61,10 @@ function cameraStart() {
             showMessage('#message', 'setting stream track to video')
             track = stream.getTracks()[0]
             video.srcObject = stream
+            video.setAttribute('width', 1080)
+            video.setAttribute('height', 2340)
+            canvas.setAttribute('width', 1080)
+            canvas.setAttribute('height', 2340)
         })
         .catch(err => showMessage('#error', err))
 }
