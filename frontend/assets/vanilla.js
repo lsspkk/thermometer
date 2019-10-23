@@ -25,16 +25,24 @@ photostart.addEventListener('click', (elem) => {
     }
 })
 
-var constraints = { video: { facingMode: "environment" }, audio: false }
+// https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+var constraints = {
+    video: {
+        facingMode: "environment",
+        width: { min: 600, ideal: 720, max: 1920 },
+        height: { min: 800, ideal: 1280, max: 1920 }
+    },
+    audio: false
+}
 
 function cameraStop() {
-    video.style.display = 'none'
     takepicturebutton.style.display = 'none'
-    navigator.mediaDevices
-        .getUserMedia(constraints)
-        .then((stream) => {
-            stream.getTracks().forEach((track) => track.stop())
-        })
+    video.style.display = 'none'
+    let stream = video.srcObject;
+    if (!stream || !stream.getTracks()) {
+        return;
+    }
+    stream.getTracks().forEach(t => t.stop())
 }
 
 function closeMessages() {
@@ -61,10 +69,6 @@ function cameraStart() {
             showMessage('#message', 'setting stream track to video')
             track = stream.getTracks()[0]
             video.srcObject = stream
-            video.setAttribute('width', 1080)
-            video.setAttribute('height', 2340)
-            canvas.setAttribute('width', 1080)
-            canvas.setAttribute('height', 2340)
         })
         .catch(err => showMessage('#error', err))
 }
